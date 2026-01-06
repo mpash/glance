@@ -63,13 +63,13 @@ spec:
         {{- with .Values.volumeMounts }}
         {{- toYaml . | nindent 8 }}
         {{- end }}
-        {{- with .Values.env }}
+        {{- if .Values.env }}
         env:
-          {{- toYaml . | nindent 10 }}
+          {{- toYaml .Values.env | nindent 10 }}
         {{- end }}
-        {{- with .Values.envFrom }}
+        {{- if .Values.envFrom }}
         envFrom:
-          {{- toYaml . | nindent 10 }}
+          {{- toYaml .Values.envFrom | nindent 10 }}
         {{- end }}
       volumes:
       - name: config
