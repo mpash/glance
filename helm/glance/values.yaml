@@ -161,7 +161,8 @@ envFrom: []
 # - secretRef:
 #     name: glance-secrets
 
-# Persistence for configuration (optional)
+# Persistence for data storage (optional)
+# When enabled, creates a PersistentVolumeClaim and mounts it at /app/data
 persistence:
   enabled: false
   # Storage class for the persistent volume

@@ -126,6 +126,16 @@ helm uninstall glance
 | `volumes`       | Additional volumes                             | `[]`   |
 | `volumeMounts`  | Additional volume mounts                       | `[]`   |
 
+### Persistence parameters
+
+| Name                            | Description                              | Value           |
+| ------------------------------- | ---------------------------------------- | --------------- |
+| `persistence.enabled`           | Enable persistent storage                | `false`         |
+| `persistence.storageClassName`  | Storage class for the PVC                | `""`            |
+| `persistence.accessMode`        | Access mode for the PVC                  | `ReadWriteOnce` |
+| `persistence.size`              | Size of the persistent volume            | `1Gi`           |
+| `persistence.annotations`       | Annotations for the PVC                  | `{}`            |
+
 ### Configuration parameters
 
 | Name     | Description                                          | Value       |
@@ -141,6 +151,22 @@ The Glance application is configured via the `config` section in `values.yaml`. 
 ```bash
 helm install glance ./helm/glance
 ```
+
+### Example: With Specific Version
+
+By default, the chart uses the appVersion specified in Chart.yaml. To use a specific version:
+
+```bash
+helm install glance ./helm/glance --set image.tag=v0.6.0
+```
+
+Or use `latest` for the most recent version:
+
+```bash
+helm install glance ./helm/glance --set image.tag=latest
+```
+
+> **Note**: For production deployments, it's recommended to pin to a specific version rather than using `latest`.
 
 ### Example: With Custom Configuration
 
