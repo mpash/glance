@@ -1,0 +1,84 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: glance-dev
+  namespace: argocd
+  labels:
+    app: glance
+    environment: development
+spec:
+  project: default
+  
+  source:
+    repoURL: https://github.com/glanceapp/glance.git
+    targetRevision: dev
+    path: helm/glance
+    
+    helm:
+      releaseName: glance
+      
+      # Override values for development
+      values: |
+        replicaCount: 1
+        
+        image:
+          tag: latest
+          pullPolicy: Always
+        
+        resources:
+          limits:
+            cpu: 500m
+            memory: 256Mi
+          requests:
+            cpu: 100m
+            memory: 128Mi
+        
+        ingress:
+          enabled: true
+          className: nginx
+          annotations:
+            cert-manager.io/cluster-issuer: letsencrypt-staging
+          hosts:
+            - host: glance-dev.example.com
+              paths:
+                - path: /
+                  pathType: Prefix
+          tls:
+            - secretName: glance-dev-tls
+              hosts:
+                - glance-dev.example.com
+        
+        config:
+          server:
+            port: 8080
+            host: 0.0.0.0
+          pages:
+            - name: Development
+              columns:
+                - size: small
+                  widgets:
+                    - type: calendar
+                - size: full
+                  widgets:
+                    - type: rss
+                      feeds:
+                        - url: https://github.com/glanceapp/glance/releases.atom
+                          title: Glance Releases
+  
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: glance-dev
+  
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+      - Validate=true
+    retry:
+      limit: 3
+      backoff:
+        duration: 5s
+        factor: 2
+        maxDuration: 1m

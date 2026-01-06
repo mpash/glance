@@ -1,0 +1,102 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: glance-production
+  namespace: argocd
+  labels:
+    app: glance
+    environment: production
+spec:
+  project: default
+  
+  source:
+    repoURL: https://github.com/glanceapp/glance.git
+    targetRevision: main
+    path: helm/glance
+    
+    helm:
+      releaseName: glance
+      
+      # Override values for production
+      values: |
+        replicaCount: 2
+        
+        image:
+          tag: v0.7.0
+          pullPolicy: IfNotPresent
+        
+        resources:
+          limits:
+            cpu: 1000m
+            memory: 512Mi
+          requests:
+            cpu: 200m
+            memory: 256Mi
+        
+        ingress:
+          enabled: true
+          className: nginx
+          annotations:
+            cert-manager.io/cluster-issuer: letsencrypt-prod
+            nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
+          hosts:
+            - host: glance.example.com
+              paths:
+                - path: /
+                  pathType: Prefix
+          tls:
+            - secretName: glance-tls
+              hosts:
+                - glance.example.com
+        
+        persistence:
+          enabled: true
+          size: 5Gi
+          storageClassName: fast
+        
+        autoscaling:
+          enabled: true
+          minReplicas: 2
+          maxReplicas: 10
+          targetCPUUtilizationPercentage: 70
+        
+        config:
+          server:
+            port: 8080
+            host: 0.0.0.0
+          pages:
+            - name: Home
+              columns:
+                - size: small
+                  widgets:
+                    - type: calendar
+                    - type: weather
+                      location: New York, United States
+                - size: full
+                  widgets:
+                    - type: rss
+                      feeds:
+                        - url: https://news.ycombinator.com/rss
+                          title: Hacker News
+                    - type: releases
+                      token: ${GITHUB_TOKEN}
+                      repositories:
+                        - glanceapp/glance
+  
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: glance-production
+  
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+      - Validate=true
+    retry:
+      limit: 5
+      backoff:
+        duration: 5s
+        factor: 2
+        maxDuration: 3m
