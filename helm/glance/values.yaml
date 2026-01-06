@@ -1,0 +1,212 @@
+# Default values for glance.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+# Number of replicas
+replicaCount: 1
+
+image:
+  # Docker image repository
+  repository: glanceapp/glance
+  # Image pull policy
+  pullPolicy: IfNotPresent
+  # Overrides the image tag whose default is the chart appVersion.
+  tag: ""
+
+# Image pull secrets for private registries
+imagePullSecrets: []
+
+# Override the name of the chart
+nameOverride: ""
+# Override the full name of the release
+fullnameOverride: ""
+
+serviceAccount:
+  # Specifies whether a service account should be created
+  create: true
+  # Automatically mount a ServiceAccount's API credentials?
+  automount: true
+  # Annotations to add to the service account
+  annotations: {}
+  # The name of the service account to use.
+  # If not set and create is true, a name is generated using the fullname template
+  name: ""
+
+# Annotations to add to the pod
+podAnnotations: {}
+# Labels to add to the pod
+podLabels: {}
+
+podSecurityContext:
+  # Run as non-root user
+  runAsNonRoot: true
+  runAsUser: 1000
+  runAsGroup: 1000
+  fsGroup: 1000
+
+securityContext:
+  # Drop all capabilities
+  capabilities:
+    drop:
+    - ALL
+  # Read-only root filesystem
+  readOnlyRootFilesystem: true
+  allowPrivilegeEscalation: false
+
+service:
+  # Service type
+  type: ClusterIP
+  # Service port
+  port: 8080
+  # Target port on the container
+  targetPort: 8080
+  # Annotations to add to the service
+  annotations: {}
+
+ingress:
+  # Enable ingress
+  enabled: false
+  # Ingress class name
+  className: ""
+  # Annotations for ingress
+  annotations: {}
+    # kubernetes.io/ingress.class: nginx
+    # kubernetes.io/tls-acme: "true"
+    # cert-manager.io/cluster-issuer: letsencrypt-prod
+  # Ingress hosts configuration
+  hosts:
+    - host: glance.local
+      paths:
+        - path: /
+          pathType: Prefix
+  # TLS configuration
+  tls: []
+  #  - secretName: glance-tls
+  #    hosts:
+  #      - glance.local
+
+# Resource limits and requests
+resources:
+  limits:
+    cpu: 500m
+    memory: 256Mi
+  requests:
+    cpu: 100m
+    memory: 128Mi
+
+# Liveness probe configuration
+livenessProbe:
+  httpGet:
+    path: /
+    port: http
+  initialDelaySeconds: 10
+  periodSeconds: 10
+  timeoutSeconds: 5
+  failureThreshold: 3
+
+# Readiness probe configuration
+readinessProbe:
+  httpGet:
+    path: /
+    port: http
+  initialDelaySeconds: 5
+  periodSeconds: 10
+  timeoutSeconds: 5
+  failureThreshold: 3
+
+# Autoscaling configuration (optional)
+autoscaling:
+  enabled: false
+  minReplicas: 1
+  maxReplicas: 10
+  targetCPUUtilizationPercentage: 80
+  # targetMemoryUtilizationPercentage: 80
+
+# Additional volumes on the output Deployment definition.
+volumes: []
+# - name: foo
+#   secret:
+#     secretName: mysecret
+#     optional: false
+
+# Additional volumeMounts on the output Deployment definition.
+volumeMounts: []
+# - name: foo
+#   mountPath: "/etc/foo"
+#   readOnly: true
+
+# Node selector for pod assignment
+nodeSelector: {}
+
+# Tolerations for pod assignment
+tolerations: []
+
+# Affinity for pod assignment
+affinity: {}
+
+# Environment variables
+env: []
+# - name: RSS_TITLE
+#   value: "My RSS Feed"
+# - name: GITHUB_TOKEN
+#   valueFrom:
+#     secretKeyRef:
+#       name: glance-secrets
+#       key: github-token
+
+# Environment variables from ConfigMap or Secret
+envFrom: []
+# - configMapRef:
+#     name: glance-env
+# - secretRef:
+#     name: glance-secrets
+
+# Persistence for configuration (optional)
+persistence:
+  enabled: false
+  # Storage class for the persistent volume
+  # storageClassName: ""
+  # Access mode
+  accessMode: ReadWriteOnce
+  # Size of the persistent volume
+  size: 1Gi
+  # Annotations for the persistent volume claim
+  annotations: {}
+
+# Glance configuration
+# This will be mounted as /app/config/glance.yml
+config:
+  # Server configuration
+  server:
+    port: 8080
+    host: 0.0.0.0
+
+  # Pages configuration
+  pages:
+    - name: Home
+      columns:
+        - size: small
+          widgets:
+            - type: calendar
+
+            - type: weather
+              location: London, United Kingdom
+
+        - size: full
+          widgets:
+            - type: rss
+              limit: 10
+              collapse-after: 3
+              cache: 3h
+              feeds:
+                - url: https://github.com/glanceapp/glance/releases.atom
+                  title: Glance Releases
+
+        - size: small
+          widgets:
+            - type: markets
+              markets:
+                - symbol: SPY
+                  name: S&P 500
+                - symbol: BTC-USD
+                  name: Bitcoin
