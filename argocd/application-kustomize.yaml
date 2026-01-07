@@ -9,7 +9,7 @@ metadata:
 spec:
   # The project the application belongs to
   project: default
-  
+
   # Source of the application manifests
   source:
     # Repository URL - update this to your actual repository
@@ -18,14 +18,14 @@ spec:
     targetRevision: copilot/create-helm-chart-for-glance
     # Path to the Kustomize base
     path: kustomize/base
-  
+
   # Destination cluster and namespace
   destination:
     # Kubernetes cluster (use in-cluster for the same cluster where ArgoCD is installed)
     server: https://kubernetes.default.svc
     # Target namespace
     namespace: glance
-  
+
   # Sync policy
   syncPolicy:
     # Automated sync
@@ -36,14 +36,14 @@ spec:
       selfHeal: true
       # Allow empty resources to be pruned
       allowEmpty: false
-    
+
     # Sync options
     syncOptions:
       # Create namespace if it doesn't exist
       - CreateNamespace=true
       # Respect ignore differences
       - RespectIgnoreDifferences=true
-    
+
     # Retry policy
     retry:
       limit: 5

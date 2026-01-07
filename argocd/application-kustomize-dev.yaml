@@ -9,16 +9,16 @@ metadata:
     environment: development
 spec:
   project: default
-  
+
   source:
     repoURL: https://github.com/glanceapp/glance.git
     targetRevision: HEAD
     path: kustomize/overlays/development
-  
+
   destination:
     server: https://kubernetes.default.svc
     namespace: glance-dev
-  
+
   syncPolicy:
     automated:
       prune: true

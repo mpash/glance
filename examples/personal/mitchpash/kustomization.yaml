@@ -3,9 +3,9 @@ kind: Kustomization
 
 namespace: glance
 
-# Reference the base
+# Reference the base (relative path from examples/personal/mitchpash)
 resources:
-  - ../../base
+  - ../../../kustomize/base
   - ingress.yaml
   - hpa.yaml
   - pvc.yaml

@@ -12,20 +12,20 @@ metadata:
     argocd.argoproj.io/sync-options: "Prune=false"
 spec:
   project: default
-  
+
   source:
     repoURL: https://github.com/glanceapp/glance.git
-    targetRevision: main  # Use stable branch for production
+    targetRevision: main # Use stable branch for production
     path: kustomize/overlays/production
-  
+
   destination:
     server: https://kubernetes.default.svc
     namespace: glance
-  
+
   syncPolicy:
     # Manual sync for production (comment out automated section for manual control)
     automated:
-      prune: false  # Don't auto-prune in production
+      prune: false # Don't auto-prune in production
       selfHeal: true
       allowEmpty: false
     syncOptions:
@@ -36,7 +36,7 @@ spec:
         duration: 5s
         factor: 2
         maxDuration: 3m
-  
+
   # Ignore differences in replicas if using HPA
   ignoreDifferences:
     - group: apps
