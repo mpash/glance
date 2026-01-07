@@ -1,0 +1,29 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+namespace: glance
+
+# Reference the base
+resources:
+  - ../../base
+  - ingress.yaml
+  - hpa.yaml
+  - pvc.yaml
+
+# Common labels for this deployment
+labels:
+  - pairs:
+      app.kubernetes.io/environment: production
+      app.kubernetes.io/managed-by: mitchpash
+
+# Patches for production resources
+patches:
+  - path: deployment-patch.yaml
+    target:
+      kind: Deployment
+      name: glance
+
+# Production settings
+images:
+  - name: glanceapp/glance
+    newTag: v0.7.0

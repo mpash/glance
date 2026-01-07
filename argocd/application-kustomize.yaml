@@ -13,9 +13,9 @@ spec:
   # Source of the application manifests
   source:
     # Repository URL - update this to your actual repository
-    repoURL: https://github.com/glanceapp/glance.git
+    repoURL: https://github.com/mpash/glance.git
     # Target revision (branch, tag, or commit)
-    targetRevision: HEAD
+    targetRevision: copilot/create-helm-chart-for-glance
     # Path to the Kustomize base
     path: kustomize/base
   

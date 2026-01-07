@@ -1,0 +1,42 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: glance-mitchpash
+  namespace: argocd
+  labels:
+    app: glance
+    deployment-type: kustomize
+    environment: production
+    owner: mitchpash
+spec:
+  project: default
+  
+  source:
+    repoURL: https://github.com/mpash/glance.git
+    targetRevision: copilot/create-helm-chart-for-glance
+    path: kustomize/overlays/mitchpash
+  
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: glance
+  
+  syncPolicy:
+    automated:
+      prune: false  # Don't auto-prune in production
+      selfHeal: true
+      allowEmpty: false
+    syncOptions:
+      - CreateNamespace=true
+    retry:
+      limit: 5
+      backoff:
+        duration: 5s
+        factor: 2
+        maxDuration: 3m
+  
+  # Ignore differences in replicas if using HPA
+  ignoreDifferences:
+    - group: apps
+      kind: Deployment
+      jsonPointers:
+        - /spec/replicas
