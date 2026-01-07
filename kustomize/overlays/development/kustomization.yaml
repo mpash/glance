@@ -1,0 +1,30 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+namespace: glance-dev
+
+namePrefix: dev-
+
+# Base configuration
+resources:
+  - ../../base
+
+# Common labels for development
+labels:
+  - pairs:
+      app.kubernetes.io/environment: development
+
+# Patches for development
+patches:
+  - path: deployment-patch.yaml
+    target:
+      kind: Deployment
+      name: glance
+
+# Override namespace
+nameSuffix: ""
+
+# Use latest image
+images:
+  - name: glanceapp/glance
+    newTag: latest

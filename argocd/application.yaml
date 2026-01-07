@@ -1,0 +1,84 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: glance
+  namespace: argocd
+  # Add labels for better organization
+  labels:
+    app: glance
+spec:
+  # The project the application belongs to
+  project: default
+  
+  # Source of the application manifests
+  source:
+    # Repository URL - update this to your actual repository
+    repoURL: https://github.com/glanceapp/glance.git
+    # Target revision (branch, tag, or commit)
+    targetRevision: HEAD
+    # Path to the Helm chart
+    path: helm/glance
+    
+    # Helm specific options
+    helm:
+      # Release name
+      releaseName: glance
+      
+      # Values files to use (relative to the chart path)
+      # valueFiles:
+      #   - values.yaml
+      
+      # Override values (inline)
+      # values: |
+      #   replicaCount: 1
+      #   image:
+      #     tag: latest
+      
+      # Helm parameters (alternative to values)
+      # parameters:
+      #   - name: image.tag
+      #     value: v0.7.0
+  
+  # Destination cluster and namespace
+  destination:
+    # Kubernetes cluster (use in-cluster for the same cluster where ArgoCD is installed)
+    server: https://kubernetes.default.svc
+    # Target namespace
+    namespace: glance
+  
+  # Sync policy
+  syncPolicy:
+    # Automated sync options
+    automated:
+      # Automatically sync when the repo changes
+      prune: true
+      # Automatically create namespace if it doesn't exist
+      selfHeal: true
+      # Allow empty resources to be pruned
+      allowEmpty: false
+    
+    # Sync options
+    syncOptions:
+      # Create namespace if it doesn't exist
+      - CreateNamespace=true
+      # Validate resources before applying
+      - Validate=true
+      # Use server-side apply
+      - ServerSideApply=false
+      # Respect ignore differences
+      - RespectIgnoreDifferences=true
+    
+    # Retry policy for failed syncs
+    retry:
+      limit: 5
+      backoff:
+        duration: 5s
+        factor: 2
+        maxDuration: 3m
+  
+  # Ignore differences in certain fields
+  ignoreDifferences:
+    - group: apps
+      kind: Deployment
+      jsonPointers:
+        - /spec/replicas

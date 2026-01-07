@@ -1,0 +1,45 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: glance-kustomize-prod
+  namespace: argocd
+  labels:
+    app: glance
+    deployment-type: kustomize
+    environment: production
+  annotations:
+    # Require manual sync for production
+    argocd.argoproj.io/sync-options: "Prune=false"
+spec:
+  project: default
+
+  source:
+    repoURL: https://github.com/glanceapp/glance.git
+    targetRevision: main # Use stable branch for production
+    path: kustomize/overlays/production
+
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: glance
+
+  syncPolicy:
+    # Manual sync for production (comment out automated section for manual control)
+    automated:
+      prune: false # Don't auto-prune in production
+      selfHeal: true
+      allowEmpty: false
+    syncOptions:
+      - CreateNamespace=true
+    retry:
+      limit: 5
+      backoff:
+        duration: 5s
+        factor: 2
+        maxDuration: 3m
+
+  # Ignore differences in replicas if using HPA
+  ignoreDifferences:
+    - group: apps
+      kind: Deployment
+      jsonPointers:
+        - /spec/replicas

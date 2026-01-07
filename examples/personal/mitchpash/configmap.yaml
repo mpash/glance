@@ -1,0 +1,137 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: glance-config
+  namespace: glance
+data:
+  glance.yml: |
+    # Server configuration
+    server:
+      port: 8080
+      host: 0.0.0.0
+
+    # Pages configuration
+    pages:
+      - name: Mitchell's Dashboard
+        columns:
+          - size: small
+            widgets:
+              - type: calendar
+
+              - type: weather
+                location: Denver, United States
+
+          - size: full
+            widgets:
+              - type: monitor
+                cache: 1m
+                title: Services
+                sites:
+                  - title: Proxmox
+                    url: https://proxmox.mitchpash.com
+                    icon: si:proxmox
+                  
+                  - title: Nextcloud
+                    url: https://nextcloud.mitchpash.com
+                    icon: si:nextcloud
+                  
+                  - title: Pi-Hole
+                    url: https://pihole.mitchpash.com
+                    icon: si:pihole
+                  
+                  - title: Home Assistant
+                    url: https://home.mitchpash.com
+                    icon: si:homeassistant
+                  
+                  - title: Zigbee2MQTT
+                    url: https://zigbee.mitchpash.com
+                    icon: si:zigbee
+                  
+                  - title: Docmost
+                    url: https://docmost.mitchpash.com
+                    icon: si:readme
+                  
+                  - title: Tautulli
+                    url: https://tautulli.mitchpash.com
+                    icon: si:plex
+                  
+                  - title: TeslaMate
+                    url: https://teslamate.mitchpash.com
+                    icon: si:tesla
+                  
+                  - title: OctoPrint
+                    url: https://octoprint.mitchpash.com
+                    icon: si:octoprint
+                  
+                  - title: Plex
+                    url: https://plex.mitchpash.com
+                    icon: si:plex
+                  
+                  - title: Immich
+                    url: https://immich.mitchpash.com
+                    icon: si:googlephotos
+                  
+                  - title: Vaultwarden
+                    url: https://vaultwarden.mitchpash.com
+                    icon: si:bitwarden
+                  
+                  - title: Frigate
+                    url: https://frigate.mitchpash.com
+                    icon: si:cctv
+                  
+                  - title: NGINX Proxy Manager
+                    url: https://proxy.mitchpash.com
+                    icon: si:nginx
+                  
+                  - title: Hoarder
+                    url: https://hoarder.mitchpash.com
+                    icon: si:pocket
+                  
+                  - title: Jellyfin
+                    url: https://jellyfin.mitchpash.com
+                    icon: si:jellyfin
+                  
+                  - title: Grafana
+                    url: https://grafana.mitchpash.com
+                    icon: si:grafana
+              
+              - type: rss
+                limit: 15
+                collapse-after: 5
+                cache: 3h
+                feeds:
+                  - url: https://news.ycombinator.com/rss
+                    title: Hacker News
+                  
+                  - url: https://github.com/glanceapp/glance/releases.atom
+                    title: Glance Releases
+                  
+                  - url: https://kubernetes.io/feed.xml
+                    title: Kubernetes Blog
+
+          - size: small
+            widgets:
+              - type: markets
+                markets:
+                  - symbol: BTC-USD
+                    name: Bitcoin
+                  - symbol: ETH-USD
+                    name: Ethereum
+                  - symbol: AAPL
+                    name: Apple Inc.
+                  - symbol: TSLA
+                    name: Tesla Inc.
+                  - symbol: NVDA
+                    name: NVIDIA Corporation
+                  - symbol: AMD
+                    name: Advanced Micro Devices
+                  - symbol: MU
+                    name: Micron Technology
+                  - symbol: INTC
+                    name: Intel Corporation
+
+              - type: clock
+                hour-format: 12h
+                timezones:
+                  - timezone: America/Denver
+                    label: Denver

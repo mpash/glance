@@ -1,0 +1,34 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: glance-kustomize-dev
+  namespace: argocd
+  labels:
+    app: glance
+    deployment-type: kustomize
+    environment: development
+spec:
+  project: default
+
+  source:
+    repoURL: https://github.com/glanceapp/glance.git
+    targetRevision: HEAD
+    path: kustomize/overlays/development
+
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: glance-dev
+
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+      allowEmpty: false
+    syncOptions:
+      - CreateNamespace=true
+    retry:
+      limit: 5
+      backoff:
+        duration: 5s
+        factor: 2
+        maxDuration: 3m

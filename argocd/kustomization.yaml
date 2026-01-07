@@ -1,0 +1,26 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+# Kustomization for ArgoCD Application manifests
+# This allows you to easily deploy multiple applications
+
+namespace: argocd
+
+resources:
+  # Basic application manifest
+  - application.yaml
+
+# Uncomment to deploy example applications
+# resources:
+#   - examples/production.yaml
+#   - examples/development.yaml
+#   - examples/git-repository.yaml
+
+# Common labels applied to all resources
+commonLabels:
+  managed-by: kustomize
+  app.kubernetes.io/part-of: glance
+
+# Common annotations
+commonAnnotations:
+  argocd.argoproj.io/sync-wave: "0"

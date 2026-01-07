@@ -1,0 +1,40 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: glance-git
+  namespace: argocd
+  labels:
+    app: glance
+spec:
+  project: default
+  
+  source:
+    # Using a Git repository directly
+    repoURL: https://github.com/glanceapp/glance.git
+    targetRevision: main
+    path: helm/glance
+    
+    helm:
+      releaseName: glance
+      
+      # Use parameters instead of values
+      parameters:
+        - name: image.tag
+          value: v0.7.0
+        - name: replicaCount
+          value: "1"
+        - name: ingress.enabled
+          value: "false"
+        - name: persistence.enabled
+          value: "false"
+  
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: glance
+  
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true

@@ -1,0 +1,41 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: glance-config
+  namespace: glance
+data:
+  glance.yml: |
+    # Server configuration
+    server:
+      port: 8080
+      host: 0.0.0.0
+
+    # Pages configuration
+    pages:
+      - name: Home
+        columns:
+          - size: small
+            widgets:
+              - type: calendar
+
+              - type: weather
+                location: London, United Kingdom
+
+          - size: full
+            widgets:
+              - type: rss
+                limit: 10
+                collapse-after: 3
+                cache: 3h
+                feeds:
+                  - url: https://github.com/glanceapp/glance/releases.atom
+                    title: Glance Releases
+
+          - size: small
+            widgets:
+              - type: markets
+                markets:
+                  - symbol: SPY
+                    name: S&P 500
+                  - symbol: BTC-USD
+                    name: Bitcoin
