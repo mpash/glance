@@ -1,0 +1,59 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: glance-config
+  namespace: glance
+data:
+  glance.yml: |
+    # Server configuration
+    server:
+      port: 8080
+      host: 0.0.0.0
+
+    # Pages configuration
+    pages:
+      - name: Mitchell's Dashboard
+        columns:
+          - size: small
+            widgets:
+              - type: calendar
+
+              - type: weather
+                location: Your City, United States
+
+          - size: full
+            widgets:
+              - type: rss
+                limit: 15
+                collapse-after: 5
+                cache: 3h
+                feeds:
+                  - url: https://news.ycombinator.com/rss
+                    title: Hacker News
+                  
+                  - url: https://github.com/glanceapp/glance/releases.atom
+                    title: Glance Releases
+                  
+                  - url: https://kubernetes.io/feed.xml
+                    title: Kubernetes Blog
+
+          - size: small
+            widgets:
+              - type: markets
+                markets:
+                  - symbol: SPY
+                    name: S&P 500
+                  - symbol: QQQ
+                    name: NASDAQ
+                  - symbol: BTC-USD
+                    name: Bitcoin
+                  - symbol: ETH-USD
+                    name: Ethereum
+
+              - type: clock
+                hour-format: 12h
+                timezones:
+                  - timezone: America/New_York
+                    label: Eastern
+                  - timezone: America/Los_Angeles
+                    label: Pacific

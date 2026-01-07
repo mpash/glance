@@ -22,6 +22,10 @@ patches:
     target:
       kind: Deployment
       name: glance
+  - path: configmap.yaml
+    target:
+      kind: ConfigMap
+      name: glance-config
 
 # Production settings
 images:

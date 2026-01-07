@@ -4,14 +4,10 @@ metadata:
   name: glance
   namespace: glance
   annotations:
-    cert-manager.io/cluster-issuer: letsencrypt-prod
-    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+    # NPM handles SSL termination, so just route HTTP traffic
+    traefik.ingress.kubernetes.io/router.entrypoints: web
 spec:
-  ingressClassName: nginx
-  tls:
-    - hosts:
-        - glance.mitchpash.com
-      secretName: glance-mitchpash-tls
+  ingressClassName: traefik
   rules:
     - host: glance.mitchpash.com
       http:
