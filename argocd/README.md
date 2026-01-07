@@ -1,6 +1,19 @@
 # ArgoCD Application Manifests for Glance
 
-This directory contains [ArgoCD](https://argoproj.github.io/cd/) Application manifests for deploying Glance using the Helm chart.
+This directory contains [ArgoCD](https://argoproj.github.io/cd/) Application manifests for deploying Glance.
+
+## 📖 New to ArgoCD?
+
+**Start here:** [Getting Started Guide](GETTING_STARTED.md) - Complete step-by-step tutorial for deploying Glance with ArgoCD.
+
+## Deployment Options
+
+Glance can be deployed using either:
+
+1. **Helm Chart** (recommended for most users) - `application.yaml`
+2. **Kustomize** (for those preferring native Kubernetes manifests) - `application-kustomize*.yaml`
+
+See the [Kustomize README](../kustomize/README.md) for detailed Kustomize documentation.
 
 ## Prerequisites
 
@@ -10,7 +23,7 @@ This directory contains [ArgoCD](https://argoproj.github.io/cd/) Application man
 
 ## Quick Start
 
-### Basic Installation
+### Helm Deployment (Recommended)
 
 Apply the basic ArgoCD Application manifest:
 
@@ -22,6 +35,23 @@ This will:
 - Create the `glance` namespace
 - Deploy Glance using the Helm chart from this repository
 - Enable automatic sync and self-healing
+
+### Kustomize Deployment
+
+For Kustomize-based deployment:
+
+```bash
+# Base deployment
+kubectl apply -f argocd/application-kustomize.yaml
+
+# Development environment
+kubectl apply -f argocd/application-kustomize-dev.yaml
+
+# Production environment
+kubectl apply -f argocd/application-kustomize-prod.yaml
+```
+
+See the [Kustomize README](../kustomize/README.md) for more details.
 
 ### View Application Status
 
@@ -37,6 +67,8 @@ argocd app get glance
 ```
 
 ## Available Manifests
+
+### Helm-based Manifests
 
 ### `application.yaml` (Basic)
 A basic ArgoCD Application manifest with sensible defaults. Good starting point for most deployments.
@@ -80,6 +112,38 @@ parameters:
 
 ### `examples/helm-repository.yaml`
 Example for using a Helm repository (when the chart is published to a chart repository).
+
+### Kustomize-based Manifests
+
+### `application-kustomize.yaml` (Base)
+Base Kustomize deployment with default configuration.
+
+**Features:**
+- Automated sync with prune and self-heal enabled
+- Deploys to `glance` namespace
+- Uses base Kustomize configuration
+- Single replica with standard resource limits
+
+### `application-kustomize-dev.yaml` (Development)
+Development environment using Kustomize overlay.
+
+**Features:**
+- Deploys to `glance-dev` namespace
+- Uses `latest` image tag
+- Reduced resource limits
+- Automatic sync enabled
+
+### `application-kustomize-prod.yaml` (Production)
+Production environment with full features.
+
+**Features:**
+- HorizontalPodAutoscaler (2-10 replicas)
+- Ingress with TLS support
+- Persistent storage (5Gi PVC)
+- Increased resource limits
+- Manual sync recommended (prune disabled)
+
+See the [Kustomize README](../kustomize/README.md) for detailed configuration options.
 
 ## Usage Examples
 

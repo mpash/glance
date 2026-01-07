@@ -1,0 +1,23 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+namespace: glance
+
+# Common labels applied to all resources
+labels:
+  - pairs:
+      app.kubernetes.io/name: glance
+      app.kubernetes.io/component: dashboard
+      app.kubernetes.io/part-of: glance
+
+resources:
+  - namespace.yaml
+  - serviceaccount.yaml
+  - configmap.yaml
+  - deployment.yaml
+  - service.yaml
+
+# Images to use
+images:
+  - name: glanceapp/glance
+    newTag: v0.7.0
